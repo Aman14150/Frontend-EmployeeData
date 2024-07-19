@@ -1,20 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import { Container, Button, Form, Alert } from "react-bootstrap";
 import { MdEditSquare, MdDeleteForever } from "react-icons/md";
+import { getEmployee } from "./AxiosServer.js";
 
 function App() {
   const [showForm, setShowForm] = useState(false);
-  const [employees, setEmployees] = useState([]);
+  const [employees, setEmployee] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [error, setError] = useState(null);
 
-  // Function to toggle the form's visibility
   const toggleForm = () => setShowForm((prevShowForm) => !prevShowForm);
 
-  // Reset form fields
+  useEffect(() => {
+    fetchEmployee();
+  }, []);
+
+  // Fetch all employees
+  const fetchEmployee = async () => {
+    try {
+      const response = await getEmployee();
+      console.log("Fetched contacts:", response.data);
+      setEmployee(response.data || []);
+    } catch (error) {
+      console.error("Error fetching contacts", error);
+      setEmployee([]);
+    }
+  };
+
   const reset = () => {
     setName("");
     setEmail("");
@@ -23,19 +38,38 @@ function App() {
   };
 
   // Add a new employee to the list
-  const addEmployee = () => {
+  const addEmployee = async () => {
     if (!name || !email || !phone) {
-      setError("All fields are required"); // Set error if any field is empty
+      setError("All fields are required");
       return;
     }
 
     const newEmployee = { name, email, phone };
-    setEmployees((prevEmployees) => [...prevEmployees, newEmployee]); // Add new employee to the list
-    reset(); // Clear form fields after submission
-    setShowForm(false); // Hide form after submission
+    try {
+      const response = await fetch("http://localhost:5000/employee", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newEmployee),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Employee added:", result.data);
+        setEmployee((prevEmployees) => [...prevEmployees, result.data]);
+        reset();
+        setShowForm(false);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || "Error adding employee");
+      }
+    } catch (error) {
+      console.error("Error adding employee", error);
+      setError("Error adding employee");
+    }
   };
 
-  // Placeholder functions for handling edit and delete actions
   const handleEdit = (index) => {
     // Implement edit functionality
   };
@@ -46,8 +80,7 @@ function App() {
 
   return (
     <Container className="container">
-      {error && <Alert variant="danger">{error}</Alert>}{" "}
-      {/* Display error message if any */}
+      {error && <Alert variant="danger">{error}</Alert>}
       <header className="App-header">
         <h2>Manage Employees</h2>
         <div className="headBtns">
@@ -111,18 +144,16 @@ function App() {
             <tbody>
               {employees.map((employee, index) => (
                 <tr key={index}>
-                  <td>
-                    {index + 1}{" "}
-                  </td>
-                  <td style={{border: "1px solid black", padding: "10px"}}>{employee.name}</td>
-                  <td style={{border: "1px solid black", padding: "10px"}}>{employee.email}</td>
-                  <td style={{border: "1px solid black", padding: "10px"}}>{employee.phone}</td>
+                  <td>{index + 1}</td>
+                  <td style={{ border: "1px solid black", padding: "10px", margin: "10px"}}>{employee.name}</td>
+                  <td style={{ border: "1px solid black", padding: "10px" , margin: "10px"}}>{employee.email}</td>
+                  <td style={{ border: "1px solid black", padding: "10px" }}>{employee.phone}</td>
                   <td className="tableBtns">
-                    <Button variant="secondary" style={{marginRight: "10px"}} onClick={() => handleEdit(index)}>
-                    <MdEditSquare style={{fontSize: "30px"}} />
+                    <Button variant="secondary" style={{ marginRight: "10px" }} onClick={() => handleEdit(index)}>
+                      <MdEditSquare style={{ fontSize: "30px" }} />
                     </Button>
                     <Button variant="danger" onClick={() => handleDelete(index)}>
-                    <MdDeleteForever style={{fontSize: "30px"}}/>
+                      <MdDeleteForever style={{ fontSize: "30px" }} />
                     </Button>
                   </td>
                 </tr>
