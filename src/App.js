@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import { Container, Button, Form, Alert } from "react-bootstrap";
 import { MdEditSquare, MdDeleteForever } from "react-icons/md";
-import { getEmployee, postEmployee } from "./AxiosServer.js";
+import { getEmployee, postEmployee, deleteAllEmployees, deleteEmployee } from "./AxiosServer.js";
 
 function App() {
   const [showForm, setShowForm] = useState(false);
-  const [employees, setEmployee] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -15,18 +15,18 @@ function App() {
   const toggleForm = () => setShowForm((prevShowForm) => !prevShowForm);
 
   useEffect(() => {
-    fetchEmployee();
+    fetchEmployees();
   }, []);
 
   // Fetch all employees
-  const fetchEmployee = async () => {
+  const fetchEmployees = async () => {
     try {
       const response = await getEmployee();
       console.log("Fetched employees:", response.data);
-      setEmployee(response.data || []);
+      setEmployees(response.data || []);
     } catch (error) {
       console.error("Error fetching employees", error);
-      setEmployee([]);
+      setEmployees([]);
     }
   };
 
@@ -44,7 +44,6 @@ function App() {
       setError("All fields are required");
       return;
     }
-
     const newEmployee = { name, email, phone };
 
     // Clear previous errors before making the request
@@ -53,26 +52,49 @@ function App() {
     try {
       // Use Axios to post new employee data
       const response = await postEmployee(newEmployee);
-      console.log("Employee added:", response.data);
+      console.log("Employee added:", response.data.data);
 
       // Update the employee list with the newly added employee
-      setEmployee((prevEmployees) => [...prevEmployees, response.data]);
+      setEmployees((prevEmployees) => [...prevEmployees, response.data.data]);
 
       // Reset form fields and hide the form
       reset();
       setShowForm(false);
     } catch (error) {
-      console.error("Error adding employee", error);
-      setError("Error adding employee");
+      if (error.response && error.response.status === 400 && error.response.data.error === 'DuplicateEmail') {
+        setError("Email already exists. Please use a different email.");
+      } else {
+        console.error("Error adding employee", error);
+        setError("Error adding employee");
+      }
+    }
+  };
+
+  // Function to delete all employees
+  const deleteAll = async () => {
+    try {
+      await deleteAllEmployees();
+      // Clear the employees state
+      setEmployees([]);
+    } catch (error) {
+      console.error("Error deleting employees", error);
+      setError("Error deleting employees");
+    }
+  };
+
+  // Function to delete a specific employee
+  const handleDeleteEmployee = async (id) => {
+    try {
+      await deleteEmployee(id);
+      setEmployees((prevEmployees) => prevEmployees.filter((employee) => employee._id !== id));
+    } catch (error) {
+      console.error("Error deleting employee", error);
+      setError("Error deleting employee");
     }
   };
 
   const handleEdit = (index) => {
     // Implement edit functionality
-  };
-
-  const handleDelete = (index) => {
-    // Implement delete functionality
   };
 
   return (
@@ -81,7 +103,7 @@ function App() {
       <header className="App-header">
         <h2>Manage Employees</h2>
         <div className="headBtns">
-          <Button variant="danger" className="deleteBtn">
+          <Button variant="danger" className="deleteBtn" onClick={deleteAll}>
             Delete All
           </Button>
           <Button variant="success" className="addBtn" onClick={toggleForm}>
@@ -149,7 +171,7 @@ function App() {
                     <Button variant="secondary" style={{ marginRight: "10px" }} onClick={() => handleEdit(index)}>
                       <MdEditSquare style={{ fontSize: "30px" }} />
                     </Button>
-                    <Button variant="danger" onClick={() => handleDelete(index)}>
+                    <Button variant="danger" onClick={() => handleDeleteEmployee(employee._id)}>
                       <MdDeleteForever style={{ fontSize: "30px" }} />
                     </Button>
                   </td>
