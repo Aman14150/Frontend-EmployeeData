@@ -5,22 +5,95 @@
 }
 
 body {
-  justify-content: center;
-  /* align-items: center; */
   height: 100vh;
 }
 
 .container {
   display: flex;
-  /* justify-content: center; */
-  /* align-content: center; */
+  flex-direction: column; /* Ensure it defaults to column for responsiveness */
   border: 1px solid black;
-  margin: 50px 50px;
+  margin: 50px;
+  width: 100%;
+}
+
+.App-header {
+  display: flex;
+  justify-content: space-between; /* Space between text and buttons */
+  /* align-items: center; */
+  width: 100%;
+  margin: 10px;
+  color: rgb(140, 0, 205);
+  font-size: 20px;
+  font-weight: 500;
+  /* background-color: antiquewhite; */
+}
+
+.headBtns {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+}
+
+.addBtn {
+  margin-right: 10px;
+}
+
+.deleteBtn {
+  margin-right: 10px; /* Space between buttons */
+}
+ 
+Form {
+  margin-bottom: 20px;
+}
+table {
+  margin-top: 20px;
+  border-collapse: separate;
+  border-spacing: 10px;
+}
+
+table thead th {
+  text-align: left;
 }
 
 @media (max-width: 767.98px) {
+  /* Mobile View */
   .container {
-    flex-direction: column;
     margin: 2px !important;
+    padding: 10px;
+  }
+  
+  .App-header {
+    align-items: flex-start;
+    margin: 0 !important;
+  }
+
+  .App-header h2 {
+    margin: 10px;
+    font-size: 20px;
+    font-weight: 500;
+    background-color: antiquewhite;
+    padding: 10px;
+  }
+
+  .headBtns {
+    width: 100%; /* Ensure it takes the full width on smaller screens */
+    justify-content: flex-end; 
+    cursor: pointer;
+    margin: 10px;
+  }
+  
+  .deleteBtn {
+    margin-right: 5px;
+    width: 50px;
+    height: 40px;
+    font-size: 13px !important;
+    padding-right: 30px !important;
+  }
+
+  .addBtn {
+    width: auto;
+    height: 50px;
+    margin-right: 5px;
+    font-size: 10px !important;
+    font-weight: 600 !important;
   }
 }
