@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import { Container, Button, Form, Alert } from "react-bootstrap";
 import { MdEditSquare, MdDeleteForever } from "react-icons/md";
-import { getEmployee } from "./AxiosServer.js";
+import { getEmployee, postEmployee } from "./AxiosServer.js";
 
 function App() {
   const [showForm, setShowForm] = useState(false);
@@ -22,14 +22,15 @@ function App() {
   const fetchEmployee = async () => {
     try {
       const response = await getEmployee();
-      console.log("Fetched contacts:", response.data);
+      console.log("Fetched employees:", response.data);
       setEmployee(response.data || []);
     } catch (error) {
-      console.error("Error fetching contacts", error);
+      console.error("Error fetching employees", error);
       setEmployee([]);
     }
   };
 
+  // Reset form fields and error state
   const reset = () => {
     setName("");
     setEmail("");
@@ -45,25 +46,21 @@ function App() {
     }
 
     const newEmployee = { name, email, phone };
-    try {
-      const response = await fetch("http://localhost:5000/employee", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newEmployee),
-      });
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Employee added:", result.data);
-        setEmployee((prevEmployees) => [...prevEmployees, result.data]);
-        reset();
-        setShowForm(false);
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || "Error adding employee");
-      }
+    // Clear previous errors before making the request
+    setError(null);
+
+    try {
+      // Use Axios to post new employee data
+      const response = await postEmployee(newEmployee);
+      console.log("Employee added:", response.data);
+
+      // Update the employee list with the newly added employee
+      setEmployee((prevEmployees) => [...prevEmployees, response.data]);
+
+      // Reset form fields and hide the form
+      reset();
+      setShowForm(false);
     } catch (error) {
       console.error("Error adding employee", error);
       setError("Error adding employee");
@@ -85,7 +82,7 @@ function App() {
         <h2>Manage Employees</h2>
         <div className="headBtns">
           <Button variant="danger" className="deleteBtn">
-            Delete
+            Delete All
           </Button>
           <Button variant="success" className="addBtn" onClick={toggleForm}>
             👨‍💼 {showForm ? "Hide Form" : "Add New Employee"}
@@ -145,8 +142,8 @@ function App() {
               {employees.map((employee, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
-                  <td style={{ border: "1px solid black", padding: "10px", margin: "10px"}}>{employee.name}</td>
-                  <td style={{ border: "1px solid black", padding: "10px" , margin: "10px"}}>{employee.email}</td>
+                  <td style={{ border: "1px solid black", padding: "10px", margin: "10px" }}>{employee.name}</td>
+                  <td style={{ border: "1px solid black", padding: "10px", margin: "10px" }}>{employee.email}</td>
                   <td style={{ border: "1px solid black", padding: "10px" }}>{employee.phone}</td>
                   <td className="tableBtns">
                     <Button variant="secondary" style={{ marginRight: "10px" }} onClick={() => handleEdit(index)}>
