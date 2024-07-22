@@ -20,5 +20,9 @@ const deleteEmployee = async (id) => {
   return await axios.delete(`http://localhost:5000/employee/${id}`);
 };
 
+const putEmployee = async (id, data) => {
+    return await axios.put(`http://localhost:5000/employee/${id}`, data);
+  };
+
 // Exporting functions for use in other files
-export { getEmployee, postEmployee, deleteAllEmployees, deleteEmployee };
+export { getEmployee, postEmployee, deleteAllEmployees, deleteEmployee, putEmployee };
