@@ -150,12 +150,14 @@ function App() {
   };
 
   // Filter employees based on the search query
-  const filteredEmployees = employees.filter(
-    (employee) =>
-      employee.name.toLowerCase().includes(searchQuery) ||
-      employee.email.toLowerCase().includes(searchQuery) ||
-      employee.phone.toLowerCase().includes(searchQuery)
-  );
+  const filteredEmployees = employees
+    .filter(
+      (employee) =>
+        employee.name.toLowerCase().includes(searchQuery) ||
+        employee.email.toLowerCase().includes(searchQuery) ||
+        employee.phone.toLowerCase().includes(searchQuery)
+    )
+    .sort((a, b) => a.name.localeCompare(b.name)); // Sort employees by name
 
   useEffect(() => {
     if (searchQuery && filteredEmployees.length === 0) {
