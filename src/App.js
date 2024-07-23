@@ -49,22 +49,19 @@ function App() {
     // Check if all fields are filled
     if (!name || !email || !phone) {
       setError("All fields are required"); // Show an error message if any field is empty
-      return; // Exit the function if there's an error
+      return;
     }
-
     // Create a new employee object
     const newEmployee = { name, email, phone };
 
     try {
       // Send the new employee data to the server
       const response = await postEmployee(newEmployee);
-
+      
       // Update the list of employees with the newly added employee
       setEmployees([...employees, response.data.data]);
-
       // Clear the form fields
       resetForm();
-
       // Hide the form after adding the employee
       setShowForm(false);
     } catch (error) {
@@ -97,7 +94,7 @@ function App() {
   const deleteEmployeeHandler = async (id) => {
     try {
       await deleteEmployee(id);
-      setEmployees(employees.filter((employee) => employee._id !== id));
+      setEmployees(employees.filter((employee) => employee._id !== id)); // If true, keep the employee; if false, exclude the employee
     } catch (error) {
       setError("Error deleting employee");
     }
@@ -105,7 +102,7 @@ function App() {
 
   // Function to update an existing employee
   const updateEmployee = async () => {
-    if (editId === null) return;
+    if (editId === null) return; // Check if there's an employee being edited
     if (!name || !email || !phone) {
       setError("All fields are required");
       return;
@@ -170,6 +167,7 @@ function App() {
   return (
     <Container className="container">
       {error && <Alert variant="danger">{error}</Alert>}
+      
       <header className="App-header">
         <h2>Manage Employees</h2>
         <div className="search-box-container">
