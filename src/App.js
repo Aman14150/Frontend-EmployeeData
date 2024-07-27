@@ -25,17 +25,18 @@ function App() {
 
   // Function to fetch employees from the server
   useEffect(() => {
-    fetchEmployees();
-  }, []);
+    fetchEmployees(searchQuery);
+  }, [searchQuery]);
 
-  const fetchEmployees = async () => {
-    try {
-      const response = await getEmployee();
-      setEmployees(response.data || []);
-    } catch (error) {
-      setError("Error fetching employees");
-    }
-  };
+ // Function to fetch employees from the server with an optional search query
+const fetchEmployees = async (search = "") => {
+  try {
+    const response = await getEmployee(search);
+    setEmployees(response.data || []);
+  } catch (error) {
+    setError("Error fetching employees");
+  }
+};
 
   // Function to reset the form fields
   const resetForm = () => {
@@ -51,30 +52,23 @@ function App() {
       setError("All fields are required"); // Show an error message if any field is empty
       return;
     }
-    // Create a new employee object
     const newEmployee = { name, email, phone };
 
     try {
       // Send the new employee data to the server
       const response = await postEmployee(newEmployee);
-      
-      // Update the list of employees with the newly added employee
+
       setEmployees([...employees, response.data.data]);
-      // Clear the form fields
       resetForm();
-      // Hide the form after adding the employee
       setShowForm(false);
     } catch (error) {
-      // Handle errors from the server
       if (
         error.response &&
         error.response.status === 400 &&
         error.response.data.error === "DuplicateEmail"
       ) {
-        // Show an error message if the email already exists
         setError("Email already exists. Please use a different email.");
       } else {
-        // Show a general error message for other errors
         setError("Error adding employee");
       }
     }
@@ -82,6 +76,9 @@ function App() {
 
   // Function to delete all employees
   const deleteAllEmployeesHandler = async () => {
+    const confirmed = window.confirm("Are you sure you want to delete all employees?");
+    if (!confirmed) return;
+
     try {
       await deleteAllEmployees();
       setEmployees([]);
@@ -92,6 +89,9 @@ function App() {
 
   // Function to delete a specific employee
   const deleteEmployeeHandler = async (id) => {
+    const confirmed = window.confirm("Are you sure you want to delete employee data?");
+    if (!confirmed) return;
+
     try {
       await deleteEmployee(id);
       setEmployees(employees.filter((employee) => employee._id !== id)); // If true, keep the employee; if false, exclude the employee
@@ -102,6 +102,9 @@ function App() {
 
   // Function to update an existing employee
   const updateEmployee = async () => {
+    const confirmed = window.confirm("Are you sure you want to Update employee data?");
+    if (!confirmed) return;
+
     if (editId === null) return; // Check if there's an employee being edited
     if (!name || !email || !phone) {
       setError("All fields are required");
@@ -146,28 +149,29 @@ function App() {
     setSearchQuery(e.target.value.toLowerCase());
   };
 
-  // Filter employees based on the search query
-  const filteredEmployees = employees
-    .filter(
-      (employee) =>
-        employee.name.toLowerCase().includes(searchQuery) ||
-        employee.email.toLowerCase().includes(searchQuery) ||
-        employee.phone.toLowerCase().includes(searchQuery)
-    )
-    .sort((a, b) => a.name.localeCompare(b.name)); // Sort employees by name
+  // Search operation from frontend
+  // // Filter employees based on the search query
+  // const filteredEmployees = employees
+  //   .filter(
+  //     (employee) =>
+  //       employee.name.toLowerCase().includes(searchQuery) ||
+  //       employee.email.toLowerCase().includes(searchQuery) ||
+  //       employee.phone.toLowerCase().includes(searchQuery)
+  //   )
+  //   .sort((a, b) => a.name.localeCompare(b.name)); // Sort employees by name
 
   useEffect(() => {
-    if (searchQuery && filteredEmployees.length === 0) {
+    if (searchQuery && employees.length === 0) {
       setNotFoundAlert(true);
     } else {
       setNotFoundAlert(false);
     }
-  }, [searchQuery, filteredEmployees]);
+  }, [searchQuery, employees]);
 
   return (
     <Container className="container">
       {error && <Alert variant="danger">{error}</Alert>}
-      
+
       <header className="App-header">
         <h2>Manage Employees</h2>
         <div className="search-box-container">
@@ -180,7 +184,7 @@ function App() {
           />
           {notFoundAlert && <Alert variant="warning">Employee Not Found</Alert>}
         </div>
-        
+
         <div className="headBtns">
           <Button
             variant="danger"
@@ -240,7 +244,7 @@ function App() {
         </Form>
       )}
 
-      {filteredEmployees.length > 0 && (
+      {employees.length > 0 && (
         <div className="employee-container" style={{ marginBottom: "20px" }}>
           <table>
             <thead>
@@ -253,7 +257,7 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              {filteredEmployees.map((employee, index) => (
+              {employees.map((employee, index) => (
                 <tr key={employee._id}>
                   <td>{index + 1}</td>
                   <td>{employee.name}</td>
