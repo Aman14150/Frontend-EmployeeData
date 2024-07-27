@@ -1,9 +1,9 @@
 import axios from "axios";
 
-// Function to get employees with optional search query
-const getEmployee = async (search = "") => {
+// Function to get employees with optional search query, page number, and items per page
+const getEmployee = async (search = "", page = 1, limit = 5) => {
   return await axios.get("http://localhost:5000/employee", {
-    params: { search }
+    params: { search, page, limit }
   });
 };
 

@@ -22,21 +22,25 @@ function App() {
   const [editId, setEditId] = useState(null); // ID of the employee being edited
   const [editMode, setEditMode] = useState(false); // To toggle between add and edit modes
   const [notFoundAlert, setNotFoundAlert] = useState(false); // To show "Employee Not Found" alert
+  const [currentPage, setCurrentPage] = useState(1); // Add state for current page
+  const [totalPages, setTotalPages] = useState(0); // Add state for total pages
+  const itemsPerPage = 5; // Number of employees per page
 
   // Function to fetch employees from the server
   useEffect(() => {
-    fetchEmployees(searchQuery);
-  }, [searchQuery]);
+    fetchEmployees(searchQuery, currentPage);
+  }, [searchQuery, currentPage]);
 
- // Function to fetch employees from the server with an optional search query
-const fetchEmployees = async (search = "") => {
-  try {
-    const response = await getEmployee(search);
-    setEmployees(response.data || []);
-  } catch (error) {
-    setError("Error fetching employees");
-  }
-};
+  // Function to fetch employees from the server with an optional search query and pagination
+  const fetchEmployees = async (search = "", page = 1) => {
+    try {
+      const response = await getEmployee(search, page, itemsPerPage);
+      setEmployees(response.data.contacts || []);
+      setTotalPages(Math.ceil(response.data.totalContacts / itemsPerPage));
+    } catch (error) {
+      setError("Error fetching employees");
+    }
+  };
 
   // Function to reset the form fields
   const resetForm = () => {
@@ -76,7 +80,9 @@ const fetchEmployees = async (search = "") => {
 
   // Function to delete all employees
   const deleteAllEmployeesHandler = async () => {
-    const confirmed = window.confirm("Are you sure you want to delete all employees?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete all employees?"
+    );
     if (!confirmed) return;
 
     try {
@@ -89,7 +95,9 @@ const fetchEmployees = async (search = "") => {
 
   // Function to delete a specific employee
   const deleteEmployeeHandler = async (id) => {
-    const confirmed = window.confirm("Are you sure you want to delete employee data?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete employee data?"
+    );
     if (!confirmed) return;
 
     try {
@@ -102,7 +110,9 @@ const fetchEmployees = async (search = "") => {
 
   // Function to update an existing employee
   const updateEmployee = async () => {
-    const confirmed = window.confirm("Are you sure you want to Update employee data?");
+    const confirmed = window.confirm(
+      "Are you sure you want to Update employee data?"
+    );
     if (!confirmed) return;
 
     if (editId === null) return; // Check if there's an employee being edited
@@ -167,6 +177,13 @@ const fetchEmployees = async (search = "") => {
       setNotFoundAlert(false);
     }
   }, [searchQuery, employees]);
+
+  // Handler for pagination controls
+  const handlePageChange = (newPage) => {
+    if (newPage > 0 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
 
   return (
     <Container className="container">
@@ -259,7 +276,7 @@ const fetchEmployees = async (search = "") => {
             <tbody>
               {employees.map((employee, index) => (
                 <tr key={employee._id}>
-                  <td>{index + 1}</td>
+                  <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                   <td>{employee.name}</td>
                   <td>{employee.email}</td>
                   <td>{employee.phone}</td>
@@ -284,6 +301,26 @@ const fetchEmployees = async (search = "") => {
           </table>
         </div>
       )}
+
+      <div className="pagination-controls">
+        <Button
+          variant="primary"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button
+          variant="primary"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
+      </div>
     </Container>
   );
 }
