@@ -1,23 +1,25 @@
 import React, { useState } from "react";
 import { Container, Form, Button } from "react-bootstrap";
-// import { Link } from 'react-router-dom'; // For navigation
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import "./Login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleLogin = (e) => {
     e.preventDefault();
     // Add login logic here
+    // On successful login, navigate to the desired page
+    // Example: navigate("/dashboard");
   };
 
   return (
     <Container className="login-container">
+      <h1>Employee Data App</h1>
       <div className="login-box">
         <h2>Login</h2>
-        {/* {error && <Alert variant="danger">{error}</Alert>} */}
         <Form onSubmit={handleLogin}>
           <Form.Group controlId="formEmail" className="email-row">
             <Form.Label className="emailHead">Email address:</Form.Label>
@@ -51,10 +53,14 @@ const Login = () => {
         </div>
 
         <div className="signup-row">
-          Don't have an account?{" "}
-          <a href="/register" className="signup-link">
+          Don't have an account? 
+          <Button 
+            variant="link" 
+            className="signup-link" 
+            onClick={() => navigate("/register")} // Use navigate for routing
+          >
             Sign Up
-          </a>
+          </Button>
         </div>
       </div>
     </Container>

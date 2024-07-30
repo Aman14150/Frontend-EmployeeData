@@ -1,31 +1,33 @@
 import React, { useState } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import './Register.css';
 
 const Register = () => {
-  const [firstName, setFirstName] = useState('');
+  const [name, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleRegister = (e) => {
     e.preventDefault();
     // Add registration logic here
+    // On successful registration, navigate to the login page
+    // Example: navigate("/login");
   };
 
   return (
     <Container className="register-container">
       <div className="register-box">
         <h2>Register</h2>
-        {/* {error && <Alert variant="danger">{error}</Alert>} */}
         <Form onSubmit={handleRegister}>
           <Form.Group controlId="formFirstName" className="form-row">
-            <Form.Label className="form-label">First Name:</Form.Label>
+            <Form.Label className="form-label">Name:</Form.Label>
             <Form.Control
               className="form-input"
               type="text"
-              placeholder="Enter first name"
-              value={firstName}
+              placeholder="Enter Name"
+              value={name}
               onChange={(e) => setFirstName(e.target.value)}
             />
           </Form.Group>
@@ -59,7 +61,14 @@ const Register = () => {
 
         <div className="signin-row">
           <p className="signin-text">
-            Already have an account? <a href="/login" className="signin-link">Sign In</a>
+            Already have an account? 
+            <Button 
+              variant="link" 
+              className="signin-link" 
+              onClick={() => navigate("/")} // Use navigate for routing
+            >
+              Sign In
+            </Button>
           </p>
         </div>
       </div>

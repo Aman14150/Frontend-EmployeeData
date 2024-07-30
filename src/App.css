@@ -12,6 +12,5 @@ body {
   display: flex;
   flex-direction: column; /* Ensure it defaults to column for responsiveness */
   border: 1px solid black;
-  /* margin: 50px 0; */
   width: 100%;
 }

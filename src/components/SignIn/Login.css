@@ -13,6 +13,10 @@
     align-items: center;
 }
 
+.login-container h1 {
+    margin-bottom: 60px;
+}
+
 .login-box {
     background: rgb(184, 238, 213);
     padding: 30px;
