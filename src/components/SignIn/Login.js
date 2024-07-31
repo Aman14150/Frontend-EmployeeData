@@ -1,25 +1,51 @@
 import React, { useState } from "react";
-import { Container, Form, Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { Container, Form, Button, Alert } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { loginUser } from "../../AxiosServer/AxiosAuth"; // Ensure this path is correct
 import "./Login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [inputError, setInputError] = useState(null);
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Add login logic here
-    // On successful login, navigate to the desired page
-    // Example: navigate("/dashboard");
-  };
+  
+    if (!email || !password) {
+      setInputError("Both email and password are required");
+      return;
+    }
+  
+    try {
+      const response = await loginUser(email, password);
+      const { token } = response.data;
+      
+      localStorage.setItem('token', token);
+      navigate("/appcontent", { state: { successMessage: 'Login successful!' } });
+
+    } catch (error) {
+      console.error('Login error:', error.response ? error.response.data : error.message);
+      if (error.response && error.response.status === 401) {
+        setError('An error occurred during login');
+      } else {
+        setError('Invalid email or password');
+      }
+      setSuccess(null);
+    } 
+  };  
 
   return (
     <Container className="login-container">
       <h1>Employee Data App</h1>
       <div className="login-box">
         <h2>Login</h2>
+        {error && <Alert variant="danger">{error}</Alert>}
+        {success && <Alert variant="success">{success}</Alert>}
+        {inputError && <Alert variant="warning">{inputError}</Alert>}
         <Form onSubmit={handleLogin}>
           <Form.Group controlId="formEmail" className="email-row">
             <Form.Label className="emailHead">Email address:</Form.Label>
@@ -43,7 +69,7 @@ const Login = () => {
             />
           </Form.Group>
 
-          <Button variant="primary" type="submit" className="login-btn" onClick={() => navigate("/Appcontent")}>
+          <Button variant="primary" type="submit" className="login-btn">
             Login
           </Button>
         </Form>
@@ -57,7 +83,7 @@ const Login = () => {
           <Button 
             variant="link" 
             className="signup-link" 
-            onClick={() => navigate("/register")} // Use navigate for routing
+            onClick={() => navigate("/register")}
           >
             Sign Up
           </Button>

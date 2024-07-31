@@ -13,18 +13,16 @@
     align-items: center;
 }
 
-.login-container h1 {
-    margin-bottom: 60px;
-}
-
 .login-box {
     background: rgb(184, 238, 213);
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
-    height: 60vh;
     max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    height: auto; /* Adjust height to content */
 }
 
 .login-box h2 {
@@ -75,18 +73,18 @@
 }
 
 .signup-row {
-    display: flex; /* Use flexbox to align items in a row */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    margin-top: 20px; /* Space above the row */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
 }
 
 .signup-link {
-    color: #007bff; /* Link color */
-    text-decoration: none; /* Remove underline */
-    margin-left: 5px; /* Space between text and link */
+    color: #007bff;
+    text-decoration: none;
+    margin-left: 5px;
 }
 
 .signup-link:hover {
-    text-decoration: underline; /* Underline on hover */
+    text-decoration: underline;
 }

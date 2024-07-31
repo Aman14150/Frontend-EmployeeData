@@ -17,6 +17,7 @@
   color: rgb(140, 0, 205);
   font-size: 20px;
   font-weight: 500;
+  position: relative; /* Positioning context for the logout button */
 }
 
 .search-box-container {
@@ -39,6 +40,10 @@
 
 .deleteBtn {
   margin-right: 10px; /* Space between buttons */
+}
+
+.logoutBtn{
+  margin-right: 10px;
 }
 
 Form {

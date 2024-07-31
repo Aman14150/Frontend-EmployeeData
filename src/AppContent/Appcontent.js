@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "./AppContent.css";
 import { Container, Button, Form, Alert } from "react-bootstrap";
-import { MdEditSquare, MdDeleteForever } from "react-icons/md";
+import { MdEditSquare, MdDeleteForever, MdLogout } from "react-icons/md";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   getEmployee,
   postEmployee,
   deleteAllEmployees,
   deleteEmployee,
   putEmployee,
-} from "../Axios/AxiosServer";
+} from "../AxiosServer/AxiosEmployees";
 
 function Appcontent() {
   // State variables
@@ -24,12 +25,23 @@ function Appcontent() {
   const [notFoundAlert, setNotFoundAlert] = useState(false); // To show "Employee Not Found" alert
   const [currentPage, setCurrentPage] = useState(1); // Add state for current page
   const [totalPages, setTotalPages] = useState(0); // Add state for total pages
+  const [successMessage, setSuccessMessage] = useState(null);
   const itemsPerPage = 5; // Number of employees per page
+
+  const navigate = useNavigate(); // Initialize navigate function
+  const location = useLocation(); // Initialize location
 
   // Function to fetch employees from the server
   useEffect(() => {
     fetchEmployees(searchQuery, currentPage);
   }, [searchQuery, currentPage]);
+
+  useEffect(() => {
+    if (location.state && location.state.successMessage) {
+      setSuccessMessage(location.state.successMessage);
+      setTimeout(() => setSuccessMessage(null), 3000); // Clear success message after 3 seconds
+    }
+  }, [location.state]);
 
   // Function to fetch employees from the server with an optional search query and pagination
   const fetchEmployees = async (search = "", page = 1) => {
@@ -187,10 +199,18 @@ function Appcontent() {
     }
   };
 
+  const handleLogout = () => {
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (confirmed) {
+      localStorage.removeItem("token");
+      navigate("/");
+    }
+  };
+
   return (
     <Container className="container">
       {error && <Alert variant="danger">{error}</Alert>}
-
+      {successMessage && <Alert variant="success">{successMessage}</Alert>} {/* Display success message */}
       <header className="App-header">
         <h2>Manage Employees</h2>
         <div className="search-box-container">
@@ -218,6 +238,13 @@ function Appcontent() {
             onClick={() => setShowForm(!showForm)}
           >
             👨‍💼 {showForm ? "Hide Form" : "Add New Employee"}
+          </Button>
+          <Button
+            variant="primary"
+            className="logoutBtn"
+            onClick={handleLogout}
+          >
+            <MdLogout style={{ fontSize: "20px" }} /> Logout
           </Button>
         </div>
       </header>
