@@ -1,3 +1,14 @@
+
+.container {
+  display: flex;
+  flex-direction: column; /* Ensure it defaults to column for responsiveness */
+  border: 1px solid black;
+  width: 100%;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+
 .App-header {
   display: flex;
   justify-content: space-between; /* Space between text and buttons */

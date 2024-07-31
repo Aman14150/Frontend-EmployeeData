@@ -43,7 +43,7 @@ const Login = () => {
             />
           </Form.Group>
 
-          <Button variant="primary" type="submit" className="login-btn">
+          <Button variant="primary" type="submit" className="login-btn" onClick={() => navigate("/Appcontent")}>
             Login
           </Button>
         </Form>

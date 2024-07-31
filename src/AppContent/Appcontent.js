@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "../App.css";
 import "./AppContent.css";
 import { Container, Button, Form, Alert } from "react-bootstrap";
 import { MdEditSquare, MdDeleteForever } from "react-icons/md";
@@ -36,9 +35,11 @@ function Appcontent() {
   const fetchEmployees = async (search = "", page = 1) => {
     try {
       const response = await getEmployee(search, page, itemsPerPage);
+      console.log("Employee data:", response.data); // Add this line
       setEmployees(response.data.contacts || []);
       setTotalPages(Math.ceil(response.data.totalContacts / itemsPerPage));
     } catch (error) {
+      console.error("Error fetching employees:", error); // Add this line
       setError("Error fetching employees");
     }
   };

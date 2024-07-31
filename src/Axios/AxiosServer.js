@@ -1,30 +1,30 @@
-import axios from "axios";
+import axios from 'axios';
 
 // Function to get employees with optional search query, page number, and items per page
 const getEmployee = async (search = "", page = 1, limit = 5) => {
-  return await axios.get("http://localhost:5000/employee", {
+  return await axios.get("http://localhost:5000/employees", {
     params: { search, page, limit }
   });
 };
 
 // Function to post a new employee
 const postEmployee = async (data) => {
-  return await axios.post("http://localhost:5000/employee", data);
+  return await axios.post("http://localhost:5000/employees", data);
 };
 
 // Function to delete all employees
 const deleteAllEmployees = async () => {
-  return await axios.delete("http://localhost:5000/employee");
+  return await axios.delete("http://localhost:5000/employees");
 };
 
 // Function to delete a specific employee by ID
 const deleteEmployee = async (id) => {
-  return await axios.delete(`http://localhost:5000/employee/${id}`);
+  return await axios.delete(`http://localhost:5000/employees/${id}`);
 };
 
 // Function to update a specific employee by ID
 const putEmployee = async (id, data) => {
-  return await axios.put(`http://localhost:5000/employee/${id}`, data);
+  return await axios.put(`http://localhost:5000/employees/${id}`, data);
 };
 
 // Exporting functions for use in other files
