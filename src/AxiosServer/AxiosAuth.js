@@ -1,18 +1,26 @@
+// src/axios/AxiosAuth.js
 import axios from 'axios';
 
-// Create an Axios instance with a base URL from environment variables
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL // Ensure this is correct
+  baseURL: process.env.REACT_APP_API_BASE_URL
 });
 
-console.log('Axios baseURL:', axiosInstance.defaults.baseURL);
+// Add an interceptor to include the token in every request
+axiosInstance.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => Promise.reject(error)
+);
 
-// Function to log in a user
 export const loginUser = async (email, password) => {
-  return await axiosInstance.post("/auth/login", { email, password }); // Correct endpoint
+  return await axiosInstance.post("/auth/login", { email, password });
 };
 
-// Function to register a new user
 export const registerUser = async (email, password) => {
-  return await axiosInstance.post("/auth/register", { email, password }); // Correct endpoint
+  return await axiosInstance.post("/auth/register", { email, password });
 };

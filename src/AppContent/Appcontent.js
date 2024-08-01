@@ -43,18 +43,21 @@ function Appcontent() {
     }
   }, [location.state]);
 
-  // Function to fetch employees from the server with an optional search query and pagination
-  const fetchEmployees = async (search = "", page = 1) => {
-    try {
-      const response = await getEmployee(search, page, itemsPerPage);
-      console.log("Employee data:", response.data); // Add this line
-      setEmployees(response.data.contacts || []);
-      setTotalPages(Math.ceil(response.data.totalContacts / itemsPerPage));
-    } catch (error) {
-      console.error("Error fetching employees:", error); // Add this line
-      setError("Error fetching employees");
-    }
-  };
+ // Function to fetch employees from the server with an optional search query and pagination
+ const fetchEmployees = async (search = "", page = 1) => {
+  try {
+    const response = await getEmployee(search, page, itemsPerPage);
+    console.log("Employee data:", response.data); // Check the response data
+    
+    // Store unsorted employees and sort them
+    const sortedData = (response.data.contacts || []).sort((a, b) => a.name.localeCompare(b.name));
+    setEmployees(sortedData);
+    setTotalPages(Math.ceil(response.data.totalContacts / itemsPerPage)); // Ensure this matches your response structure
+  } catch (error) {
+    console.error("Error fetching employees:", error);
+    setError("Error fetching employees");
+  }
+};
 
   // Function to reset the form fields
   const resetForm = () => {
@@ -207,6 +210,9 @@ function Appcontent() {
     }
   };
 
+   // Sort employees by name
+   const sortedEmployees = [...employees].sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <Container className="container">
       {error && <Alert variant="danger">{error}</Alert>}
@@ -290,12 +296,12 @@ function Appcontent() {
         </Form>
       )}
 
-      {employees.length > 0 && (
+      {sortedEmployees.length > 0 && (
         <div className="employee-container" style={{ marginBottom: "20px" }}>
           <table>
             <thead>
-              <tr>
-                <th>Sr.No.</th>
+              <tr >
+                <th >Sr.No.</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
@@ -303,15 +309,15 @@ function Appcontent() {
               </tr>
             </thead>
             <tbody>
-              {employees.map((employee, index) => (
+              {sortedEmployees.map((employee, index) => (
                 <tr key={employee._id}>
-                  <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                  <td style={{textAlign: "center"}}>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                   <td>{employee.name}</td>
                   <td>{employee.email}</td>
                   <td>{employee.phone}</td>
                   <td className="tableBtns">
                     <Button
-                      variant="secondary"
+                      variant="warning"
                       style={{ marginRight: "10px" }}
                       onClick={() => startEditing(employee._id)}
                     >

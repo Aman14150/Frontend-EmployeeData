@@ -62,12 +62,14 @@ table th,
 table td {
   padding: 10px; /* Space within cells */
   text-align: left;
+  text-align: center;
 }
 
 table thead th {
   background-color: #f0f0f0; /* Background color for header */
   font-weight: bold;
   justify-content: center;
+  
 }
 
 table tbody tr {

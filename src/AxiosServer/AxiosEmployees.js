@@ -1,31 +1,39 @@
 import axios from 'axios';
 
-// Function to get employees with optional search query, page number, and items per page
-const getEmployee = async (search = "", page = 1, limit = 5) => {
-  return await axios.get("http://localhost:5000/employees", {
+const axiosInstance = axios.create({
+  baseURL: process.env.REACT_APP_API_BASE_URL
+});
+
+// Add an interceptor to include the token in every request
+axiosInstance.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => Promise.reject(error)
+);
+
+export const getEmployee = async (search = "", page = 1, limit = 5) => {
+  return await axiosInstance.get("/employees", {
     params: { search, page, limit }
   });
 };
 
-// Function to post a new employee
-const postEmployee = async (data) => {
-  return await axios.post("http://localhost:5000/employees", data);
+export const postEmployee = async (employee) => {
+  return await axiosInstance.post("/employees", employee);
 };
 
-// Function to delete all employees
-const deleteAllEmployees = async () => {
-  return await axios.delete("http://localhost:5000/employees");
+export const deleteAllEmployees = async () => {
+  return await axiosInstance.delete("/employees");
 };
 
-// Function to delete a specific employee by ID
-const deleteEmployee = async (id) => {
-  return await axios.delete(`http://localhost:5000/employees/${id}`);
+export const deleteEmployee = async (id) => {
+  return await axiosInstance.delete(`/employees/${id}`);
 };
 
-// Function to update a specific employee by ID
-const putEmployee = async (id, data) => {
-  return await axios.put(`http://localhost:5000/employees/${id}`, data);
+export const putEmployee = async (id, updatedEmployee) => {
+  return await axiosInstance.put(`/employees/${id}`, updatedEmployee);
 };
-
-// Exporting functions for use in other files
-export { getEmployee, postEmployee, deleteAllEmployees, deleteEmployee, putEmployee };
