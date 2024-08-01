@@ -82,6 +82,8 @@ function Appcontent() {
       setEmployees([...employees, response.data.data]);
       resetForm();
       setShowForm(false);
+      setSuccessMessage("Data Added Successfully"); // Set success message
+      setTimeout(() => setSuccessMessage(null), 3000); // Clear success message after 3 seconds
     } catch (error) {
       if (
         error.response &&

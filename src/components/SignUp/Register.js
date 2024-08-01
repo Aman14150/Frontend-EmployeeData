@@ -1,26 +1,32 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { registerUser } from '../../AxiosServer/AxiosAuth'; // Adjust the path if necessary
+import { registerUser } from '../../AxiosServer/AxiosAuth'; 
 import './Register.css';
 
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !confirmPassword) {
       setError("Please fill all fields");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
       return;
     }
     
     try {
-      await registerUser(name, email, password);
+      await registerUser(name, email, password, confirmPassword);
       setSuccess("Registration successful! Redirecting to login...");
       setTimeout(() => {
         navigate('/');
@@ -65,10 +71,21 @@ const Register = () => {
             <Form.Label className="form-label">Create Password:</Form.Label>
             <Form.Control
               className="form-input"
-              type="password"
+              type="text"
               placeholder="Enter password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group controlId="formConfirmPassword" className="form-row">
+            <Form.Label className="form-label">Confirm Password:</Form.Label>
+            <Form.Control
+              className="form-input"
+              type="text"
+              placeholder="Re-Type password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </Form.Group>
 
