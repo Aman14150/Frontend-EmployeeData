@@ -1,34 +1,52 @@
 import React, { useState } from 'react';
-import { Container, Form, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Container, Form, Button, Alert } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { registerUser } from '../../AxiosServer/AxiosAuth'; // Adjust the path if necessary
 import './Register.css';
 
 const Register = () => {
-  const [name, setFirstName] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    // Add registration logic here
-    // On successful registration, navigate to the login page
-    // Example: navigate("/login");
+    if (!name || !email || !password) {
+      setError("Please fill all fields");
+      return;
+    }
+    
+    try {
+      await registerUser(name, email, password);
+      setSuccess("Registration successful! Redirecting to login...");
+      setTimeout(() => {
+        navigate('/');
+      }, 2000); // Redirect after 2 seconds
+    } catch (error) {
+      console.error('Registration error:', error.response ? error.response.data : error.message);
+      setError(error.response ? error.response.data.error : 'Registration failed');
+      setSuccess(null);
+    }
   };
 
   return (
     <Container className="register-container">
       <div className="register-box">
         <h2>Register</h2>
+        {error && <Alert variant="danger">{error}</Alert>}
+        {success && <Alert variant="success">{success}</Alert>}
         <Form onSubmit={handleRegister}>
-          <Form.Group controlId="formFirstName" className="form-row">
+          <Form.Group controlId="formName" className="form-row">
             <Form.Label className="form-label">Name:</Form.Label>
             <Form.Control
               className="form-input"
               type="text"
               placeholder="Enter Name"
               value={name}
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
             />
           </Form.Group>
 
@@ -65,7 +83,7 @@ const Register = () => {
             <Button 
               variant="link" 
               className="signin-link" 
-              onClick={() => navigate("/")} // Use navigate for routing
+              onClick={() => navigate("/")}
             >
               Sign In
             </Button>

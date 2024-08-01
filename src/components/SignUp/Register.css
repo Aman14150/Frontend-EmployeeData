@@ -1,77 +1,81 @@
 /* Basic Reset */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  .register-container {
-    display: flex;
-    height: 100vh;
-    background: #a7a7a7;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .register-box {
-    background: rgb(184, 238, 213);
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    height: 65vh;
-    max-width: 500px;
-  }
-  
-  .register-box h2 {
-    margin-bottom: 20px;
-    color: #0e0e0e;
-    text-align: center;
-  }
-  
-  .form-row {
-    margin-bottom: 15px;
-  }
-  
-  .form-label {
-    color: black;
-    font-size: 15px;
-  }
-  
-  .form-input {
-    margin-bottom: 10px;
-  }
-  
-  .register-btn {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    background: #007bff;
-    color: white;
-    font-size: 20px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .register-btn:hover {
-    background: #0056b3;
-  }
-  
-  .signin-row {
-    margin-top: 20px;
-    text-align: center;
-  }
-  
-  .signin-text {
-    font-size: 14px;
-  }
-  
-  .signin-link {
-    color: #007bff;
-    text-decoration: none;
-  }
-  
-  .signin-link:hover {
-    text-decoration: underline;
-  }
-  
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.register-container {
+  display: flex;
+  height: 100vh;
+  background: #a7a7a7;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-box {
+  background: rgb(184, 238, 213);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+}
+
+.register-box h2 {
+  margin-bottom: 20px;
+  color: #0e0e0e;
+  text-align: center;
+}
+
+.form-row {
+  margin-bottom: 15px;
+}
+
+.form-label {
+  color: black;
+  font-size: 15px;
+}
+
+.form-input {
+  margin-bottom: 5px;
+}
+
+.register-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: #007bff;
+  color: white;
+  font-size: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.register-btn:hover {
+  background: #0056b3;
+}
+
+.signin-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.signin-text {
+  font-size: 14px;
+}
+
+.signin-link {
+  color: #007bff;
+  text-decoration: none;
+  margin-left: 5px;
+}
+
+.signin-link:hover {
+  text-decoration: underline;
+}
